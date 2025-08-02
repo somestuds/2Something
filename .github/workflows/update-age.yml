@@ -2,7 +2,7 @@ name: Update Age
 
 on:
   schedule:
-    - cron: '49 6 * * *' # Runs every day at 2:48 AM EDT (6:48 UTC)
+    - cron: '51 6 * * *' # Runs every day at 2:48 AM EDT (6:48 UTC)
 
 jobs:
   update-age:
@@ -16,6 +16,7 @@ jobs:
         id: calculate_age
         run: |
           python3 <<EOF
+          import os
           from datetime import date
           birthdate = date(2010, 12, 12)
           today = date.today()
