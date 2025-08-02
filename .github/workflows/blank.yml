@@ -1,54 +1,48 @@
-name: Update README with current age
+name: Update README age
 
 on:
   schedule:
-    - cron: '28 6 * * *'  # Run daily at 06:07 UTC (== 2:07 AM EDT)
-  workflow_dispatch:     # Manual trigger
+    - cron: '30 6 * * *'  # Runs daily at 06:30 UTC (2:30 AM EDT)
+  workflow_dispatch:      # Manual trigger
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Calculate precise age
-        id: calc_age
+      - name: Update age in readme.md with Python
         run: |
-          # 👇 Your real birthdate
-          BIRTH_DATE="2010-12-12"
+          python3 -c "
+import re
+from datetime import datetime
 
-          TODAY=$(date +'%Y-%m-%d')
+birth_date = datetime.strptime('2010-12-12', '%Y-%m-%d')
+today = datetime.utcnow()
+age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
 
-          # Extract parts
-          BIRTH_YEAR=$(date -d "$BIRTH_DATE" +'%Y')
-          BIRTH_MONTH_DAY=$(date -d "$BIRTH_DATE" +'%m-%d')
+with open('readme.md', 'r', encoding='utf-8') as f:
+    text = f.read()
 
-          CURRENT_YEAR=$(date +'%Y')
-          CURRENT_MONTH_DAY=$(date +'%m-%d')
+pattern = r'(<!-- _startage -->).*?(<!-- _endage -->)'
+replacement = rf'\1 {age} \2'
 
-          # Start with diff in years
-          AGE=$((CURRENT_YEAR - BIRTH_YEAR))
+updated_text = re.sub(pattern, replacement, text, flags=re.DOTALL)
 
-          # If birthday hasn't happened yet this year, subtract 1
-          if [[ "$CURRENT_MONTH_DAY" < "$BIRTH_MONTH_DAY" ]]; then
-            AGE=$((AGE - 1))
-          fi
-
-          echo "AGE=$AGE" >> $GITHUB_ENV
-          echo "Calculated age: $AGE"
-
-      - name: Update readme.md
-        run: |
-          sed -i "s/<!-- _startage -->.*<!-- _endage -->/<!-- _startage --> $AGE <!-- _endage -->/" readme.md
+with open('readme.md', 'w', encoding='utf-8') as f:
+    f.write(updated_text)
+          "
 
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           if ! git diff --quiet; then
             git add readme.md
-            git commit -m "chore: update age in README to $AGE"
+            git commit -m "chore: update age to ${{ env.AGE }}"
             git push
           else
             echo "No changes to commit"
