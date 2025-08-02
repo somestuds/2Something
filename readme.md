@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./readme.png">
+    <img src="https://github.com/somestuds/somestuds/blob/master/readme.png?raw=true">
     </br>
     <h1 align="center">Somestuds </br>
         <img height="30px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" title="Javascript" alt="js"/>
