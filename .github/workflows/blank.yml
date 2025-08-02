@@ -1,0 +1,49 @@
+name: Update README age
+
+on:
+  schedule:
+    - cron: '30 6 * * *'  # Runs daily at 06:30 UTC (2:30 AM EDT)
+  workflow_dispatch:      # Manual trigger
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Update age in readme.md with Python
+        run: |
+          python3 -c "
+import re
+from datetime import datetime
+
+birth_date = datetime.strptime('2010-12-12', '%Y-%m-%d')
+today = datetime.utcnow()
+age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+
+with open('readme.md', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+pattern = r'(<!-- _startage -->).*?(<!-- _endage -->)'
+replacement = rf'\1 {age} \2'
+
+updated_text = re.sub(pattern, replacement, text, flags=re.DOTALL)
+
+with open('readme.md', 'w', encoding='utf-8') as f:
+    f.write(updated_text)
+          "
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if ! git diff --quiet; then
+            git add readme.md
+            git commit -m "chore: update age to ${{ env.AGE }}"
+            git push
+          else
+            echo "No changes to commit"
+          fi
