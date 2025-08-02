@@ -2,7 +2,7 @@ name: Update README with current age
 
 on:
   schedule:
-    - cron: '10 6 * * *'  # Run daily at 06:07 UTC (== 2:07 AM EDT)
+    - cron: '28 6 * * *'  # Run daily at 06:07 UTC (== 2:07 AM EDT)
   workflow_dispatch:     # Manual trigger
 
 jobs:
@@ -38,16 +38,16 @@ jobs:
           echo "AGE=$AGE" >> $GITHUB_ENV
           echo "Calculated age: $AGE"
 
-      - name: Update README.md
+      - name: Update readme.md
         run: |
-          sed -i "s/<!-- _startage -->.*<!-- _endage -->/<!-- _startage --> $AGE <!-- _endage -->/" README.md
+          sed -i "s/<!-- _startage -->.*<!-- _endage -->/<!-- _startage --> $AGE <!-- _endage -->/" readme.md
 
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if ! git diff --quiet; then
-            git add README.md
+            git add readme.md
             git commit -m "chore: update age in README to $AGE"
             git push
           else
