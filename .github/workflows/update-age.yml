@@ -2,7 +2,7 @@ name: Update Age
 
 on:
   schedule:
-    - cron: '51 6 * * *' # Runs every day at 2:48 AM EDT (6:48 UTC)
+    - cron: '52 6 * * *' # Runs every day at 2:48 AM EDT (6:48 UTC)
 
 jobs:
   update-age:
