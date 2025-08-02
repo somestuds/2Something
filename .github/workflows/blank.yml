@@ -2,7 +2,7 @@ name: Update README with current age
 
 on:
   schedule:
-    - cron: '7 6 * * *'  # Run daily at 06:07 UTC (== 2:07 AM EDT)
+    - cron: '10 6 * * *'  # Run daily at 06:07 UTC (== 2:07 AM EDT)
   workflow_dispatch:     # Manual trigger
 
 jobs:
