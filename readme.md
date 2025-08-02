@@ -30,7 +30,7 @@
     </h3>
     </br>
     <h3 align="center">
-        I am <!-- _startage --> 14 <!-- _endage --> years old, and started programming in roblox at 6.
+        I am <!-- _startage --> 2020 <!-- _endage --> years old, and started programming in roblox at 6.
     </h3>
 </p>
 
