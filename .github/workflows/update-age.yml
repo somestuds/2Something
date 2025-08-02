@@ -1,0 +1,35 @@
+name: Update Age
+
+on:
+  schedule:
+    - cron: '49 6 * * *' # Runs every day at 2:48 AM EDT (6:48 UTC)
+
+jobs:
+  update-age:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Calculate age
+        id: calculate_age
+        run: |
+          python3 <<EOF
+          from datetime import date
+          birthdate = date(2010, 12, 12)
+          today = date.today()
+          age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+          with open(os.environ['GITHUB_ENV'], 'a') as envfile:
+              envfile.write(f"age={age}\n")
+          EOF
+
+      - name: Update README.md
+        run: |
+          sed -i "s/<!-- _startage --> [0-9]* <!-- _endage -->/<!-- _startage --> ${{ env.age }} <!-- _endage -->/" readme.md
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -am "Update age to ${{ env.age }}"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
